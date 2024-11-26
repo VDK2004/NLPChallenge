@@ -56,7 +56,8 @@ class ChatHandler:
         
     def generate_prompt(self, query: str, context_docs: Dict) -> str:
         """Generate a prompt for the LLM using the query and retrieved documents"""
-        documents = context_docs.get('documents', [[]])[0]
+        # Get all documents from the first batch of results
+        documents = context_docs['documents'][0] if context_docs['documents'] else []
         context = "\n\n".join(documents)
         
         if "t5" in self.current_model.model_id.lower():
@@ -70,9 +71,8 @@ class ChatHandler:
         {context}
 
         Question: {query}
-
         Answer:"""
-
+        
     def get_huggingface_response(self, prompt: str) -> str:
         """Generate response using local HuggingFace model"""
         try:

@@ -26,9 +26,9 @@ class DocumentProcessor:
             
         return chunks
 
-    def extract_text_from_pdf(self, pdf_file) -> Dict:
+    def extract_text_from_pdf(self, pdf_file) -> List[Dict]:
         """
-        Extract text from a PDF file and return a dictionary with metadata
+        Extract text from a PDF file and return a list of document chunks
         """
         try:
             # Read PDF file
@@ -44,13 +44,14 @@ class DocumentProcessor:
             text_chunks = self.tokenize_text(full_text)
 
             # Create document metadata
-            doc_info = {
-                'id': str(uuid.uuid4()),
-                'filename': pdf_file.name,
-                'num_pages': len(pdf_reader.pages),
-                'content': text_chunks,  # Now storing chunks instead of raw text
-                'total_tokens': len(self.tokenizer.encode(full_text))
-            }
+            doc_info = []
+            for i, chunk in enumerate(text_chunks):
+                doc_info.append({
+                    'id': f"{str(uuid.uuid4())}_{i}",
+                    'filename': pdf_file.name,
+                    'num_pages': len(pdf_reader.pages),
+                    'content': chunk
+                })
             
             return doc_info
         
@@ -66,6 +67,6 @@ class DocumentProcessor:
         for file in files:
             if file.name.lower().endswith('.pdf'):
                 doc_info = self.extract_text_from_pdf(file)
-                processed_docs.append(doc_info)
+                processed_docs.extend(doc_info)
             
         return processed_docs

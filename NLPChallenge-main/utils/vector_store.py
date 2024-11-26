@@ -2,6 +2,7 @@ import chromadb
 from chromadb.config import Settings
 import os
 from typing import List, Dict
+from sentence_transformers import SentenceTransformer
 
 class VectorStore:
     def __init__(self, persist_directory: str = "./chroma_db"):
@@ -63,6 +64,29 @@ class VectorStore:
         )
         
         return results
+
+    def similarity_search(self, query: str, k: int = 4) -> Dict:
+        """
+        Search for documents similar to the query
+        Args:
+            query: The search query
+            k: Number of documents to return
+        Returns:
+            Dictionary with documents and their metadata
+        """
+        # Generate embedding for the query
+        query_embedding = self.generate_embeddings([query])[0]
+        
+        # Search in ChromaDB
+        results = self.collection.query(
+            query_embeddings=[query_embedding],
+            n_results=k
+        )
+        
+        return {
+            'documents': results['documents'],
+            'metadatas': results['metadatas'] if results['metadatas'] else []
+        }
 
     def get_all_documents(self) -> str:
         """Retrieve all documents from the vector store"""

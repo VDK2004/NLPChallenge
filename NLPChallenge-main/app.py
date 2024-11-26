@@ -74,8 +74,7 @@ def main():
                     processed_docs = doc_processor.process_documents(uploaded_files)
                     
                     # Store in vector store
-                    for doc in processed_docs:
-                        vector_store.add_texts(doc)
+                    vector_store.add_documents(processed_docs)
                     
                     st.success(f"Successfully processed {len(processed_docs)} documents!")
 
