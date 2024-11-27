@@ -5,3 +5,5 @@ sentence-transformers==2.2.2
 chromadb==0.4.22
 python-dotenv==1.0.0
 groq==0.4.2
+transformers==4.30.2
+huggingface-hub==0.14.1
